@@ -90,7 +90,7 @@ om.on("gotMessage", function(msg) {
     removePrompt();
     console.log(chalk.red("Stranger: ") + msg);
     if (msg.toLowerCase().includes("asl") && asl !== null) {
-        sendMessage(asl.join("/"));
+        sendMessage(asl.join("/") + ". You?");
     }
 
     process.stdout.write(chalk.blue("You: "));
