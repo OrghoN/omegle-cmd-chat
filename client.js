@@ -6,8 +6,14 @@ var om = new Omegle(); //create an instance of `Omegle`
 
 var interests = ["role play", "role playing", "rp"]
 
+function removePrompt() {
+    process.stdout.clearLine(); // clear current text
+    process.stdout.cursorTo(0); // move cursor to beginning of line
+}
+
 //This will print any errors that might get thrown by functions
 om.on("omerror", function(err) {
+    removePrompt();
     console.log(chalk.magenta("error: " + err));
 });
 
@@ -24,24 +30,29 @@ om.on("waiting", function() {
 //emitted when you"re connected to a stranger
 om.on("connected", function() {
     console.log(chalk.green("connected"));
+    process.stdout.write(chalk.blue("You: "));
 });
 
 //emitted when you get a message
 om.on("gotMessage", function(msg) {
+    removePrompt();
     console.log(chalk.red("Stranger: ") + msg);
+    process.stdout.write(chalk.blue("You: "));
+
+
     // om.send("Hi"); //used to send a message to the stranger
 });
 
 //emitted when the stranger disconnects
 om.on("strangerDisconnected", function() {
+    removePrompt();
     console.log(chalk.magenta("stranger disconnected."));
-    om.connect(interests);
 });
 
 //emmitted when you disconnected
 om.on("disconnected", function() {
     // console.log("you disconnected");
-    // om.connect(interests);
+    om.connect(interests);
 });
 
 //reading and sending chat
@@ -53,8 +64,7 @@ process.stdin.on("readable", () => {
     }
     var chunk = process.stdin.read();
     if (chunk !== null) {
-        process.stdout.write(chalk.blue("You: ") + chunk);
-        // console.log(chalk.blue("You: ") + chunk);
+        process.stdout.write(chalk.blue("You: "));
         om.send(chunk);
     }
     if (om.connected()) {
@@ -66,6 +76,5 @@ process.stdin.on("end", () => {
     process.stdout.write("end");
 });
 
-//Once you"re subscribed to all the events that you wish to listen to,
-//call connect() to connect to Omegle and start looking for a stranger.
+
 om.connect(interests);
