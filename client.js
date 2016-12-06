@@ -7,22 +7,26 @@ var om = new Omegle(); //create an instance of `Omegle`
 var interests = null;
 var asl = null;
 
-if (process.argv.length > 2) {
-    asl = [];
-}
+function intializeVariables() {
 
-switch (process.argv.length) {
-    case 6:
-        asl[2] = process.argv[5];
+    if (process.argv.length > 2) {
+        asl = [];
+    }
 
-    case 5:
-        asl[1] = process.argv[4];
+    switch (process.argv.length) {
+        case 6:
+            asl[2] = process.argv[5];
 
-    case 4:
-        asl[0] = process.argv[3];
+        case 5:
+            asl[1] = process.argv[4];
 
-    case 3:
-        interests = process.argv[2].split(",");
+        case 4:
+            asl[0] = process.argv[3];
+
+        case 3:
+            interests = process.argv[2].split(",");
+    }
+
 }
 
 function removePrompt() {
@@ -130,5 +134,7 @@ process.stdin.on("readable", () => {
         om.stopTyping();
     }
 });
+
+intializeVariables()
 
 connect(interests);
