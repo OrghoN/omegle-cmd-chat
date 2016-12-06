@@ -4,11 +4,43 @@ const chalk = require("chalk");
 
 var om = new Omegle(); //create an instance of `Omegle`
 
-var interests = ["role play", "role playing", "rp"]
+var interests = null;
+var asl = null;
+
+if (process.argv.length > 2) {
+    asl = [];
+}
+
+switch (process.argv.length) {
+    case 6:
+        asl[2] = process.argv[5];
+
+    case 5:
+        asl[1] = process.argv[4];
+
+    case 4:
+        asl[0] = process.argv[3];
+
+    case 3:
+        interests = process.argv[2].split(",");
+}
 
 function removePrompt() {
     process.stdout.clearLine(); // clear current text
     process.stdout.cursorTo(0); // move cursor to beginning of line
+}
+
+function sendMessage(msg) {
+    console.log(chalk.blue("You: ") + msg);
+    om.send(msg);
+}
+
+function connect(interest) {
+    if (interest === null) {
+        om.connect();
+    } else {
+        om.connect(interest);
+    }
 }
 
 //This will print any errors that might get thrown by functions
@@ -37,20 +69,28 @@ om.on("connected", function() {
 
     console.log(chalk.green("connected"));
 
-    console.log(chalk.blue("You:") + " Hey");
-    om.send("Hey");
-
-    process.stdout.write(chalk.blue("You: "));
+    if (interests === null) {
+        sendMessage("Hey");
+        process.stdout.write(chalk.blue("You: "));
+    }
 
 });
+
+om.on("commonLikes", function(likes) {
+    console.log(chalk.green("You both like " + likes.join(", ")));
+
+    if (interests !== null) {
+        sendMessage("Hey");
+        process.stdout.write(chalk.blue("You: "));
+    }
+})
 
 //emitted when you get a message
 om.on("gotMessage", function(msg) {
     removePrompt();
     console.log(chalk.red("Stranger: ") + msg);
-    if (msg.toLowerCase().includes("asl")) {
-        console.log((chalk.blue("You:") + " 18/m/US"));
-        om.send("18/m/US");
+    if (msg.toLowerCase().includes("asl") && asl !== null) {
+        sendMessage(asl.join("/"));
     }
 
     process.stdout.write(chalk.blue("You: "));
@@ -65,7 +105,7 @@ om.on("strangerDisconnected", function() {
 
 //emmitted when you disconnected
 om.on("disconnected", function() {
-    om.connect(interests);
+    connect(interests);
 });
 
 //reading and sending chat
@@ -91,4 +131,4 @@ process.stdin.on("readable", () => {
     }
 });
 
-om.connect(interests);
+connect(interests);
