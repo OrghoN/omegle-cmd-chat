@@ -11,6 +11,7 @@ function removePrompt() {
     process.stdout.cursorTo(0); // move cursor to beginning of line
 }
 
+
 //This will print any errors that might get thrown by functions
 om.on("omerror", function(err) {
     removePrompt();
@@ -29,14 +30,26 @@ om.on("waiting", function() {
 
 //emitted when you"re connected to a stranger
 om.on("connected", function() {
+
     console.log(chalk.green("connected"));
+
+    console.log(chalk.blue("You:") +" Hey");
+    om.send("Hey");
+
     process.stdout.write(chalk.blue("You: "));
+
+
 });
 
 //emitted when you get a message
 om.on("gotMessage", function(msg) {
     removePrompt();
     console.log(chalk.red("Stranger: ") + msg);
+    if (msg.toLowerCase().includes("asl")) {
+        console.log((chalk.blue("You:") +" 18/m/US"));
+        om.send("18/m/US");
+    }
+
     process.stdout.write(chalk.blue("You: "));
 
 
@@ -51,7 +64,6 @@ om.on("strangerDisconnected", function() {
 
 //emmitted when you disconnected
 om.on("disconnected", function() {
-    // console.log("you disconnected");
     om.connect(interests);
 });
 
@@ -64,17 +76,18 @@ process.stdin.on("readable", () => {
     }
     var chunk = process.stdin.read();
     if (chunk !== null) {
-        process.stdout.write(chalk.blue("You: "));
-        om.send(chunk);
+        if (chunk.toLowerCase().includes("/dc")) {
+            console.log(chalk.magenta("you disconnected"));
+            om.disconnect();
+        } else {
+            process.stdout.write(chalk.blue("You: "));
+            om.send(chunk);
+        }
+
     }
     if (om.connected()) {
         om.stopTyping();
     }
 });
-
-process.stdin.on("end", () => {
-    process.stdout.write("end");
-});
-
 
 om.connect(interests);
