@@ -11,7 +11,6 @@ function removePrompt() {
     process.stdout.cursorTo(0); // move cursor to beginning of line
 }
 
-
 //This will print any errors that might get thrown by functions
 om.on("omerror", function(err) {
     removePrompt();
@@ -33,11 +32,10 @@ om.on("connected", function() {
 
     console.log(chalk.green("connected"));
 
-    console.log(chalk.blue("You:") +" Hey");
+    console.log(chalk.blue("You:") + " Hey");
     om.send("Hey");
 
     process.stdout.write(chalk.blue("You: "));
-
 
 });
 
@@ -46,14 +44,12 @@ om.on("gotMessage", function(msg) {
     removePrompt();
     console.log(chalk.red("Stranger: ") + msg);
     if (msg.toLowerCase().includes("asl")) {
-        console.log((chalk.blue("You:") +" 18/m/US"));
+        console.log((chalk.blue("You:") + " 18/m/US"));
         om.send("18/m/US");
     }
 
     process.stdout.write(chalk.blue("You: "));
 
-
-    // om.send("Hi"); //used to send a message to the stranger
 });
 
 //emitted when the stranger disconnects
