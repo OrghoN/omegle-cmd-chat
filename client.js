@@ -17,6 +17,11 @@ om.on("omerror", function(err) {
     console.log(chalk.magenta("error: " + err));
 });
 
+om.on("omegleError", function(err) {
+    removePrompt();
+    console.log(chalk.magenta("error: " + err));
+});
+
 //gotID is emitted when you"re connected to Omegle
 om.on("gotID", function(id) {
     console.log(chalk.yellow("connected to the server as: " + id));
